@@ -1,0 +1,180 @@
+<Window x:Class="GameTranslator.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Game Translator V1.3" Height="820" Width="1280" MinHeight="700" MinWidth="1100"
+        WindowStartupLocation="CenterScreen" Background="#F5F7FA">
+    <Window.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Padding" Value="14,8"/>
+            <Setter Property="Margin" Value="0,0,8,0"/>
+        </Style>
+        <Style x:Key="Card" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#DDE3EA"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="14"/>
+            <Setter Property="Margin" Value="0,0,10,10"/>
+        </Style>
+        <Style x:Key="CardValue" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="#172033"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
+        <Style x:Key="CardLabel" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Foreground" Value="#687386"/>
+            <Setter Property="Margin" Value="0,0,0,5"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Border Background="White" BorderBrush="#DDE3EA" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,12">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBox x:Name="GamePathBox" Height="36" VerticalContentAlignment="Center" Margin="0,0,10,0"/>
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button Content="Klasör Seç" Click="Browse_Click"/>
+                    <Button Content="Oyunu Analiz Et" Click="Inspect_Click"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <TabControl Grid.Row="1" x:Name="MainTabs">
+            <TabItem Header="Game Inspector">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="12">
+                        <WrapPanel>
+                            <Border Style="{StaticResource Card}" Width="235">
+                                <StackPanel>
+                                    <TextBlock Style="{StaticResource CardLabel}" Text="Motor"/>
+                                    <TextBlock x:Name="EngineText" Style="{StaticResource CardValue}" Text="-"/>
+                                    <TextBlock x:Name="EngineConfidenceText" Foreground="#687386" Margin="0,4,0,0" Text=""/>
+                                </StackPanel>
+                            </Border>
+                            <Border Style="{StaticResource Card}" Width="235">
+                                <StackPanel>
+                                    <TextBlock Style="{StaticResource CardLabel}" Text="Arşiv Yapısı"/>
+                                    <TextBlock x:Name="ArchiveModeText" Style="{StaticResource CardValue}" Text="-"/>
+                                    <TextBlock x:Name="EncryptionText" Foreground="#687386" Margin="0,4,0,0" Text=""/>
+                                </StackPanel>
+                            </Border>
+                            <Border Style="{StaticResource Card}" Width="235">
+                                <StackPanel>
+                                    <TextBlock Style="{StaticResource CardLabel}" Text="Loose LocRes"/>
+                                    <TextBlock x:Name="LocresCountText" Style="{StaticResource CardValue}" Text="0"/>
+                                    <TextBlock x:Name="StructuredCountText" Foreground="#687386" Margin="0,4,0,0" Text=""/>
+                                </StackPanel>
+                            </Border>
+                            <Border Style="{StaticResource Card}" Width="235">
+                                <StackPanel>
+                                    <TextBlock Style="{StaticResource CardLabel}" Text="StringTable / DataTable"/>
+                                    <TextBlock x:Name="TableCountText" Style="{StaticResource CardValue}" Text="0 / 0"/>
+                                    <TextBlock x:Name="FontCountText" Foreground="#687386" Margin="0,4,0,0" Text=""/>
+                                </StackPanel>
+                            </Border>
+                        </WrapPanel>
+
+                        <Border Style="{StaticResource Card}" Margin="0,0,0,10">
+                            <StackPanel>
+                                <TextBlock Style="{StaticResource CardLabel}" Text="Önerilen Yöntem"/>
+                                <TextBlock x:Name="RecommendationText" FontSize="22" FontWeight="SemiBold" Foreground="#166534" Text="Henüz analiz yapılmadı."/>
+                                <TextBlock x:Name="RecommendationReasonText" Margin="0,6,0,0" TextWrapping="Wrap" Foreground="#4B5563"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Grid Margin="0,0,0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Border Style="{StaticResource Card}" Grid.Column="0">
+                                <DockPanel>
+                                    <TextBlock DockPanel.Dock="Top" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,8" Text="Bulunan Adaylar"/>
+                                    <DataGrid x:Name="InspectionCandidatesGrid" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" Height="320">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Header="Tür" Binding="{Binding Kind}" Width="140"/>
+                                            <DataGridTextColumn Header="Dosya" Binding="{Binding FileName}" Width="200"/>
+                                            <DataGridTextColumn Header="Neden" Binding="{Binding Reason}" Width="260"/>
+                                            <DataGridTextColumn Header="Yol" Binding="{Binding Path}" Width="*"/>
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                </DockPanel>
+                            </Border>
+
+                            <Border Style="{StaticResource Card}" Grid.Column="1" Margin="0,0,0,10">
+                                <DockPanel>
+                                    <TextBlock DockPanel.Dock="Top" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,8" Text="Tespit Kanıtları"/>
+                                    <DataGrid x:Name="EvidenceGrid" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" Height="320">
+                                        <DataGrid.Columns>
+                                            <DataGridTextColumn Header="Kategori" Binding="{Binding Category}" Width="90"/>
+                                            <DataGridTextColumn Header="Açıklama" Binding="{Binding Message}" Width="*"/>
+                                        </DataGrid.Columns>
+                                    </DataGrid>
+                                </DockPanel>
+                            </Border>
+                        </Grid>
+
+                        <Border Style="{StaticResource Card}" Margin="0">
+                            <StackPanel>
+                                <TextBlock FontSize="16" FontWeight="SemiBold" Margin="0,0,0,6" Text="Notlar / Uyarılar"/>
+                                <TextBlock x:Name="WarningsText" TextWrapping="Wrap" Foreground="#6B7280" Text="Arşiv şifrelemesi salt dosya taramasıyla kesin tespit edilmez; CUE4Parse provider bağlandığında doğrulanacaktır."/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="Metinler / Çeviri">
+                <Grid Margin="12">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <StackPanel Margin="0,0,0,10">
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="Tara" Click="Scan_Click"/>
+                            <Button Content="Loose Metinleri Çıkar" Click="Extract_Click"/>
+                            <Button Content="Arşivden Metinleri Çıkar (CUE4Parse)" Click="ExtractArchive_Click"/>
+                            <Button Content="Türkçe'ye Çevir" Click="Translate_Click"/>
+                            <Button Content="Çevrilmiş Dosyaları Dışa Aktar" Click="Export_Click"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                            <TextBlock Text="AES Key (opsiyonel):" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                            <TextBox x:Name="AesKeyBox" Width="520" Height="30" VerticalContentAlignment="Center" ToolTip="Yalnızca sahip olduğunuz / kullanmaya yetkili olduğunuz AES anahtarını girin."/>
+                            <TextBlock Margin="10,0,0,0" VerticalAlignment="Center" Foreground="#687386" Text="Şifreli değilse boş bırakın."/>
+                        </StackPanel>
+                    </StackPanel>
+                    <DataGrid Grid.Row="1" x:Name="EntriesGrid" AutoGenerateColumns="False" IsReadOnly="False" CanUserAddRows="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="2*" IsReadOnly="True"/>
+                            <DataGridTextColumn Header="Kaynak" Binding="{Binding SourceText}" Width="3*" IsReadOnly="True"/>
+                            <DataGridTextColumn Header="Türkçe" Binding="{Binding TranslatedText, UpdateSourceTrigger=PropertyChanged}" Width="3*"/>
+                            <DataGridTextColumn Header="Dosya" Binding="{Binding SourceFile}" Width="2*" IsReadOnly="True"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+        </TabControl>
+
+        <Grid Grid.Row="2" Margin="0,12,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="260"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock x:Name="StatusText" VerticalAlignment="Center" Foreground="#4B5563"/>
+            <ProgressBar Grid.Column="1" x:Name="Progress" Height="18" Minimum="0" Maximum="100"/>
+        </Grid>
+    </Grid>
+</Window>
