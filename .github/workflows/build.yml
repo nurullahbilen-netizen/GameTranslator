@@ -1,0 +1,31 @@
+name: Build GameTranslator EXE
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup .NET 8
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Restore
+      run: dotnet restore GameTranslator.sln
+
+    - name: Publish Standalone EXE
+      run: |
+        dotnet publish src/GameTranslator.App/GameTranslator.App.csproj -c Release -r win-x64 --self-contained true -o ./publish
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: GameTranslator_V1.3_EXE
+        path: ./publish
