@@ -1,0 +1,41 @@
+<Window x:Class="GameTranslator.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Game Translator" Height="640" Width="1050">
+  <Grid Margin="12">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/><RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/><RowDefinition Height="Auto"/>
+    </Grid.RowDefinitions>
+
+    <DockPanel Grid.Row="0" Margin="0,0,0,8" IsEnabled="{Binding IsIdle}">
+      <Button DockPanel.Dock="Right" Content="Tara" Command="{Binding ScanCommand}" Padding="16,4" Margin="6,0,0,0"/>
+      <Button DockPanel.Dock="Right" Content="Gözat…" Command="{Binding BrowseCommand}" Padding="12,4" Margin="6,0,0,0"/>
+      <TextBox Text="{Binding GameFolder, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center"/>
+    </DockPanel>
+
+    <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,8">
+      <ComboBox ItemsSource="{Binding Providers}" SelectedItem="{Binding SelectedProvider}" Width="110" IsEnabled="{Binding IsIdle}"/>
+      <TextBox Text="{Binding ApiKey}" Width="260" Margin="6,0" ToolTip="DeepL API anahtarı (Ollama için gerekmez)" IsEnabled="{Binding IsIdle}"/>
+      <Button Content="Çevir" Command="{Binding TranslateCommand}" IsEnabled="{Binding IsIdle}" Padding="16,4"/>
+      <Button Content="İptal" Command="{Binding CancelCommand}" Padding="12,4" Margin="6,0"/>
+      <Button Content="Dosyalara Yaz" Command="{Binding ExportCommand}" IsEnabled="{Binding IsIdle}" Padding="12,4"/>
+      <Button Content="Sözlük (TSV)" Command="{Binding ExportDictionaryCommand}" IsEnabled="{Binding IsIdle}" Padding="12,4" Margin="6,0,0,0"/>
+    </StackPanel>
+
+    <DataGrid Grid.Row="2" ItemsSource="{Binding Entries}" AutoGenerateColumns="False" CanUserAddRows="False"
+              AlternatingRowBackground="#F5F5F5" EnableRowVirtualization="True">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Anahtar" Binding="{Binding Key}" IsReadOnly="True" Width="200"/>
+        <DataGridTextColumn Header="Orijinal" Binding="{Binding Source}" IsReadOnly="True" Width="*"/>
+        <DataGridTextColumn Header="Türkçe" Binding="{Binding Translation, Mode=TwoWay}" Width="*"/>
+        <DataGridTextColumn Header="Durum" Binding="{Binding Status}" IsReadOnly="True" Width="90"/>
+      </DataGrid.Columns>
+    </DataGrid>
+
+    <DockPanel Grid.Row="3" Margin="0,8,0,0">
+      <ProgressBar DockPanel.Dock="Right" Width="220" Height="16" Maximum="100" Value="{Binding Progress}"/>
+      <TextBlock Text="{Binding Status}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
+    </DockPanel>
+  </Grid>
+</Window>
