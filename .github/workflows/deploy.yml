@@ -1,0 +1,27 @@
+name: Build Game Translator
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Build App
+      run: |
+        dotnet publish GameTranslator/GameTranslator.App/GameTranslator.App.csproj -c Release -r win-x64 --self-contained true -o ./publish || dotnet publish GameTranslator/GameTranslator/GameTranslator.App/GameTranslator.App.csproj -c Release -r win-x64 --self-contained true -o ./publish
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: GameTranslator_Release
+        path: ./publish
